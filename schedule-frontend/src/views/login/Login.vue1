@@ -1,0 +1,147 @@
+<template>
+	<div class="login-container">
+		<a-form class="loginForm">
+			<a-form-item>
+				<span class="loginTitle">实训中心约课系统</span>
+			</a-form-item>
+			<a-form-item v-bind="validateInfos.username">
+				<a-input v-model:value="loginModel.username" placeholder="请输入账户">
+					<template #prefix>
+						<UserOutlined style="color: rgba(0, 0, 0, 0.25)" />
+					</template>
+				</a-input>
+			</a-form-item>
+			<a-form-item v-bind="validateInfos.password">
+				<a-input v-model:value="loginModel.password" type="password" placeholder="请输入密码">
+					<template #prefix>
+						<LockOutlined style="color: rgba(0, 0, 0, 0.25)" />
+					</template>
+				</a-input>
+			</a-form-item>
+			<a-form-item v-bind="validateInfos.userType">
+				<a-radio-group v-model:value="loginModel.userType" :defaultChecked="2">
+					<a-radio :value="2">教师</a-radio>
+					<a-radio :value="3">管理员</a-radio>
+				</a-radio-group>
+			</a-form-item>
+			<a-form-item>
+				<a-row :gutter="[16, 16]">
+					<a-col :span="12">
+						<a-button @click="loginBtn" class="mybtn" type="primary">登录</a-button>
+					</a-col>
+					<a-col :span="12">
+						<a-button @click="resetBtn" class="mybtn">重置</a-button>
+					</a-col>
+				</a-row>
+			</a-form-item>
+		</a-form>
+	</div>
+</template>
+<script setup lang="ts">
+import { reactive } from "vue";
+import { setToken, setUserId,setUserType } from "@/utils/auth";
+import { loginApi } from "@/api/login/login";
+import useForm from "ant-design-vue/es/form/useForm";
+import { useRouter } from "vue-router";
+import useUserStore from '@/store/user';
+import { to } from 'await-to-js';
+const userStore = useUserStore();
+
+const router = useRouter();
+const loginModel = reactive({
+  username: "",
+  password: "",
+  userType: "",
+});
+//定义表单验证规则
+const rules = reactive({
+  username: [
+    {
+      required: true,
+      trigger: "change",
+      message: "请输入账户",
+    },
+  ],
+  password: [
+    {
+      required: true,
+      trigger: "change",
+      message: "请输入密码",
+    },
+  ],
+  userType: [
+    {
+      required: true,
+      trigger: "change",
+      message: "请选择用户类型",
+    },
+  ],
+});
+//获取表单验证属性
+const { validate, validateInfos, clearValidate } = useForm(loginModel, rules);
+//登录按钮
+const loginBtn = () => {
+  validate().then(async () => {
+
+      const [err]  = await to(userStore.login(loginModel));
+      if (!err) {
+        await router.push({ path: '/' });
+
+      } else {
+
+      }
+    // let res = await loginApi(loginModel);
+    // if (res && res.code == 200) {
+    //   //存储token
+    //   setToken(res.data.token);
+    //   //存储用户id
+    //   setUserId(res.data.userId);
+    //   setUserType(res.data.userType)
+    //   //跳转到首页
+    //   router.push({ path: "/" });
+    // }
+
+
+      // userStore.login(loginModel).then(()=>{
+      //   router.push({ path: "/" });
+      // });
+
+
+  });
+};
+//重置按钮
+const resetBtn = () => {
+  loginModel.username = "";
+  loginModel.password = "";
+  clearValidate();
+};
+</script>
+<style scoped lang="scss">
+.login-container {
+  height: 100%;
+  background: #fff;
+  background-image: url("@/assets/login.png");
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: 100% 100%;
+  .loginForm {
+    height: 340px;
+    width: 450px;
+    background: #fff;
+    padding: 35px 20px;
+    border-radius: 10px;
+    .loginTitle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 600;
+      color: #1890ff;
+    }
+    .mybtn {
+      width: 100%;
+    }
+  }
+}
+</style>

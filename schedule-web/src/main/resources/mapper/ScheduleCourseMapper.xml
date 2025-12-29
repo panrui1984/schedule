@@ -1,0 +1,91 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yakx.web.mapper.ScheduleCourseMapper">
+    <sql id="column">
+        cs.id, cs.room_id, cs.class_number, classroom.room_name,classroom.room_address, classroom.is_ezviz, classroom.device_serial,
+        cs.course_id, course.course_name, course.course_color,
+        cs.teacher_id, teacher.teacher_name,
+        cs.class_id, clsases.class_name,
+        cs.date_time, cs.begin_time, cs.end_time,
+        cs.reason, cs.remark, cs.sequence, cs.password, cs.type,
+        cs.create_by, cs.create_time, cs.update_by, cs.update_time
+    </sql>
+
+    <select id="getList" resultType="com.yakx.web.domain.vo.ScheduleCourseListVo">
+        select
+        <include refid="column"></include>
+        from  schedule_course cs
+        left join classroom on cs.room_id = classroom.room_id
+        left join course on cs.course_id = course.course_id
+        left join teacher on cs.teacher_id = teacher.teacher_id
+        left join clsases on cs.class_id = clsases.class_id
+        where 1=1
+        <if test="ew.sqlSegment !=''">
+            and ${ew.sqlSegment}
+        </if>
+    </select>
+
+    <select id="getScheduleList" resultType="com.yakx.web.domain.vo.ScheduleCourseListVo">
+        select
+         <include refid="column"></include>
+        from  schedule_course cs
+        left join classroom on cs.room_id = classroom.room_id
+        left join course on cs.course_id = course.course_id
+        left join teacher on cs.teacher_id = teacher.teacher_id
+        left join clsases on cs.class_id = clsases.class_id
+        where 1=1
+        <if test="ew.sqlSegment !=''">
+            and ${ew.sqlSegment}
+        </if>
+    </select>
+
+    <select id="selectOwnCourseSchedulingList" resultType="com.yakx.web.domain.schedule.ScheduleCourse">
+        select
+        <include refid="column"></include>
+        from  schedule_course cs
+        left join  classroom on cs.room_id = classroom.room_id
+        left join course on cs.course_id = course.course_id
+        left join teacher on cs.teacher_id = teacher.teacher_id
+        left join clsases on cs.class_id = clsases.class_id
+        where 1=1
+        <if test="teacherId != null and teacherId !=''">
+            and cs.teacher_id = #{teacherId}
+        </if>
+        order by cs.date_time asc,cs.begin_time asc
+    </select>
+
+
+    <select id="selectCourseSchedulingList" resultType="com.yakx.web.domain.schedule.ScheduleCourse">
+        select
+         <include refid="column"></include>
+        from  schedule_course cs
+        left join  classroom on cs.room_id = classroom.room_id
+        left join course on cs.course_id = course.course_id
+        left join teacher on cs.teacher_id = teacher.teacher_id
+        left join clsases on cs.class_id = clsases.class_id
+        where 1=1
+         <if test="parm.teacherIdList != null and parm.teacherIdList !=''">
+            and cs.teacher_id = #{parm.teacherIdList}
+        </if>
+         order by cs.date_time asc,cs.begin_time asc
+    </select>
+
+    <select id="selectCourseSchedulingLists" resultType="com.yakx.web.domain.schedule.ScheduleCourse">
+        select
+        <include refid="column"></include>
+        from  schedule_course cs
+        left join classroom on cs.room_id = classroom.room_id
+        left join course on cs.course_id = course.course_id
+        left join teacher on cs.teacher_id = teacher.teacher_id
+        left join clsases on cs.class_id = clsases.class_id
+        where 1=1
+        <if test="ew.sqlSegment !=''">
+            and ${ew.sqlSegment}
+        </if>
+        order by cs.date_time asc,cs.begin_time asc
+    </select>
+
+
+</mapper>

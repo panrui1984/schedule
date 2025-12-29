@@ -1,0 +1,45 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yakx.web.mapper.CourseMapper">
+    <select id="getSelectCourse" resultType="com.yakx.web.domain.Course">
+        select c.*,t.teacher_name,t.teacher_id from course as c
+        left join schedule_course as sc on c.course_id = sc.course_id
+        left join teacher as t on sc.teacher_id = t.teacher_id
+        where 1=1
+        <if test="parm.courseType != null and parm.courseType !=''">
+            and c.course_type =#{parm.courseType}
+        </if>
+        <if test="parm.courseName != null and parm.courseName !=''">
+            and c.course_name like concat('%',#{parm.courseName},'%')
+        </if>
+        GROUP BY sc.course_id,sc.teacher_id
+    </select>
+    <select id="getTeacherCourse" resultType="com.yakx.web.domain.Course">
+        select c.* from schedule_course as sc
+        inner join course as c on c.course_id = sc.course_id
+        where sc.teacher_id =#{parm.teacherId}
+         <if test="parm.courseType != null and parm.courseType !=''">
+            and c.course_type =#{parm.courseType}
+        </if>
+        <if test="parm.courseName != null and parm.courseName !=''">
+            and c.course_name like concat('%',#{parm.courseName},'%')
+        </if>
+        GROUP BY c.course_id
+        order by c.course_year desc
+    </select>
+    <select id="getStuCourse" resultType="com.yakx.web.domain.bo.SelectCourseBo">
+       select sc.stu_course_id,c.*,t.teacher_id,t.teacher_name from student_course as sc
+        inner join course as c on c.course_id = sc.course_id
+        inner join teacher as t on t.teacher_id = sc.teacher_id
+        where sc.stu_id =#{parm.stuId}
+        <if test="parm.courseType != null and parm.courseType !=''">
+            and c.course_type =#{parm.courseType}
+        </if>
+        <if test="parm.courseName != null and parm.courseName !=''">
+            and c.course_name like concat('%',#{parm.courseName},'%')
+        </if>
+        order by c.course_year desc
+    </select>
+</mapper>

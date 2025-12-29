@@ -1,0 +1,27 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yakx.web.mapper.ClassroomMaintenanceMapper">
+
+    <sql id="column">
+        cm.id,
+        cm.room_id,
+        classroom.room_name,
+        cm.date_time,
+        cm.begin_time,
+        cm.end_time
+    </sql>
+
+    <select id="getList" resultType="com.yakx.web.domain.schedule.ClassroomMaintenance">
+        select
+        <include refid="column"></include>
+        from  classroom_maintenance cm
+        left join classroom on cm.room_id = classroom.room_id
+        where 1=1
+        <if test="ew.sqlSegment !=''">
+            and ${ew.sqlSegment}
+        </if>
+    </select>
+
+</mapper>

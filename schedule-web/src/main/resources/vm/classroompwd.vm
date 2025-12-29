@@ -1,0 +1,1 @@
+${teacherName}老师， 您好！您预约的${roomName}的电子门锁密码是${password},请注意密码在${dateTime}从${startTime}至${endTime}有效。
