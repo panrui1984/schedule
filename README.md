@@ -1,4 +1,4 @@
-基于springboot vue的智能选课系统
+基于springboot vue的智能排课，选课，教室管理系统
 
 已停更
 
